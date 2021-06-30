@@ -43,10 +43,10 @@ ENV PHP_INI_DIR /usr/local/etc/php
 RUN set -eux; \
 	mkdir -p "$PHP_INI_DIR/conf.d"; \
 # allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
-	[ ! -d /var/www/html ]; \
-	mkdir -p /var/www/html; \
-	chown www-data:www-data /var/www/html; \
-	chmod 777 /var/www/html
+	[ ! -d /main/public ]; \
+	mkdir -p /main/public; \
+	chown www-data:www-data /main/public; \
+	chmod 777 /main/public
 
 ENV PHP_EXTRA_CONFIGURE_ARGS --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data --disable-cgi
 
@@ -211,7 +211,7 @@ COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 RUN docker-php-ext-enable sodium
 
 ENTRYPOINT ["docker-php-entrypoint"]
-WORKDIR /var/www/html
+WORKDIR /main/public
 
 RUN set -eux; \
 	cd /usr/local/etc; \
@@ -253,6 +253,13 @@ RUN set -eux; \
 
 # Override stop signal to stop process gracefully
 # https://github.com/php/php-src/blob/17baa87faddc2550def3ae7314236826bc1b1398/sapi/fpm/php-fpm.8.in#L163
+RUN apt update && apt-get install -y apt-utils
+RUN pecl install xdebug php-amqp
+COPY sources.list /etc/apt/sources.list
+RUN apt update
+RUN apt upgrade -y
+RUN apt -y install lsb-release apt-transport-https ca-certificates
+RUN apt install -y wget
 STOPSIGNAL SIGQUIT
 
 EXPOSE 9000
