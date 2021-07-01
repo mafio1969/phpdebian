@@ -254,18 +254,47 @@ RUN set -eux; \
 # Override stop signal to stop process gracefully
 # https://github.com/php/php-src/blob/17baa87faddc2550def3ae7314236826bc1b1398/sapi/fpm/php-fpm.8.in#L163
 WORKDIR /
-COPY config/nginx/sources.list /etc/apt/sources.list
-RUN apt-get update && apt-get install -y apt-utils && apt-get install -y nginx \
-    && apt-get install -y supervisor\
-    && apt-get  install -y gnupg2
 
-RUN pecl install xdebug php-amqp
+RUN apt update && apt upgrade -y && apt install -y lsb-release ca-certificates apt-transport-https software-properties-common \
+    &&  apt install -y wget curl cron git unzip gnupg2
+COPY config/nginx/sources.list /etc/apt/sources.list
+COPY config/nginx/no-debian-php /etc/apt/preferences.d/no-debian-php
+COPY config/nginx/sury-php.list /etc/apt/sources.list.d/sury-php.list
+RUN wget -qO - https://packages.sury.org/php/apt.gpg | apt-key add -
+RUN apt update
+
+RUN apt-get update \
+    && apt-get install -y apt-utils \
+    && apt-get install -y supervisor\
+    && apt-get install -y nginx\
+    && apt-get install -y software-properties-common\
+    && apt-get install g++
+
+RUN pecl install xdebug
+RUN pecl install -o -f redis \
+&&  rm -rf /tmp/pear \
+&&  docker-php-ext-enable redis
+RUN docker-php-ext-install pdo_mysql
+RUN docker-php-ext-enable pdo_mysql
+
+ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.1.12/supercronic-linux-amd64 \
+    SUPERCRONIC=supercronic-linux-amd64 \
+    SUPERCRONIC_SHA1SUM=048b95b48b708983effb2e5c935a1ef8483d9e3e
+
+RUN curl -fsSLO "$SUPERCRONIC_URL" \
+ && echo "${SUPERCRONIC_SHA1SUM}  ${SUPERCRONIC}" | sha1sum -c - \
+ && chmod +x "$SUPERCRONIC" \
+ && mv "$SUPERCRONIC" "/usr/local/bin/${SUPERCRONIC}" \
+ && ln -s "/usr/local/bin/${SUPERCRONIC}" /usr/local/bin/supercronic
+
 COPY config/nginx/fastcgi.conf /etc/nginx/fastcgi.conf
 COPY config/nginx/enabled.conf /etc/nginx/sites-enabled/enabled.conf
 COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY config/nginx/mime.types /etc/nginx/mime.types
-RUN apt update && apt upgrade -y && apt -y install lsb-release apt-transport-https ca-certificates \
-    &&  apt install -y wget curl cron git unzip
+COPY config/php.ini /usr/local/etc/php/conf.d/php.ini
+COPY config/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+
+
 #RUN apt install python3-acme python3-certbot python3-mock python3-openssl python3-pkg-resources python3-pyparsing python3-zope.interface
 #RUN apt install python3-certbot-nginx
 
@@ -274,17 +303,24 @@ RUN mv composer.phar /usr/local/bin/composer
 RUN apt-get update && apt-get upgrade -y
 RUN wget https://get.symfony.com/cli/installer -O - | bash
 RUN mv  /root/.symfony/bin/symfony /usr/local/bin/symfony
-
+# RUN add-apt-repository ppa:ondrej/php
+# RUN add-apt-repository ppa:ubuntudde-dev/stable
 RUN wget http://nginx.org/keys/nginx_signing.key
 RUN apt-key add nginx_signing.key
 RUN mkdir -p /usr/share/nginx/logs
 RUN touch /usr/share/nginx/logs/error.log
 COPY ./main /main
+
+#RUN apt-get update && \
+#    apt-get install --no-install-recommends --no-install-suggests -y \
+#    gnupg1 openssl git unzip libzip-dev nano libpng-dev libmagickwand-dev curl xauth xvfb openssh-client less inkscape cron exiftool libicu-dev libmcrypt-dev libc-client-dev libkrb5-dev libssl-dev libxslt1-dev \
+#    php7.4-mysql php7.4-mysql php7.4-opcache php7.4-zip php7.4-gd php7.4-mysqli php7.4-exif php7.4-bcmath php7.4-calendar php7.4-intl php7.4-soap php7.4-imap php7.4-sockets php7.4-xsl
+
 RUN chmod 777 -R /main
 STOPSIGNAL SIGQUIT
 WORKDIR /main
 EXPOSE 8080 9000
 
-COPY config/supervisord.conf /etc/supervisord.conf
+COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 CMD ["/usr/bin/supervisord", "-n"]
