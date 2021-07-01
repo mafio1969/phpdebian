@@ -216,7 +216,7 @@ WORKDIR /main/public
 RUN set -eux; \
 	cd /usr/local/etc; \
 	if [ -d php-fpm.d ]; then \
-		# for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf"
+		# for some reason, upstream's php-fpm.config.default has "include=NONE/etc/php-fpm.d/*.config"
 		sed 's!=NONE/!=!g' php-fpm.conf.default | tee php-fpm.conf > /dev/null; \
 		cp php-fpm.d/www.conf.default php-fpm.d/www.conf; \
 	else \
@@ -253,14 +253,41 @@ RUN set -eux; \
 
 # Override stop signal to stop process gracefully
 # https://github.com/php/php-src/blob/17baa87faddc2550def3ae7314236826bc1b1398/sapi/fpm/php-fpm.8.in#L163
-RUN apt update && apt-get install -y apt-utils
-RUN pecl install xdebug php-amqp
+WORKDIR /
 COPY sources.list /etc/apt/sources.list
-RUN apt update
-RUN apt upgrade -y
-RUN apt -y install lsb-release apt-transport-https ca-certificates
-RUN apt install -y wget
-STOPSIGNAL SIGQUIT
+RUN apt-get update && apt-get install -y apt-utils && apt-get install -y nginx \
+    && apt-get install -y supervisor\
+    && apt-get  install -y gnupg2 \
+    && apt-get  install -y git \
+    && apt-get  install -y zip
 
-EXPOSE 9000
-CMD ["php-fpm"]
+
+RUN pecl install xdebug php-amqp
+COPY ./config/nginx/fastcgi.conf /etc/nginx/fastcgi.conf
+COPY ./config/nginx/enabled.conf /etc/nginx/sites-enabled/enabled.conf
+COPY ./config/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY ./config/nginx/mime.types /etc/nginx/mime.types
+RUN apt update && apt upgrade -y && apt -y install lsb-release apt-transport-https ca-certificates \
+    &&  apt install -y wget curl cron git unzip
+#RUN apt install python3-acme python3-certbot python3-mock python3-openssl python3-pkg-resources python3-pyparsing python3-zope.interface
+#RUN apt install python3-certbot-nginx
+
+RUN curl -sS https://getcomposer.org/installer | php
+RUN mv composer.phar /usr/local/bin/composer
+RUN apt-get update && apt-get upgrade -y
+RUN wget https://get.symfony.com/cli/installer -O - | bash
+RUN mv  /root/.symfony/bin/symfony /usr/local/bin/symfony
+
+RUN wget http://nginx.org/keys/nginx_signing.key
+RUN apt-key add nginx_signing.key
+RUN mkdir -p /usr/share/nginx/logs
+RUN touch /usr/share/nginx/logs/error.log
+COPY ./main /main
+RUN chmod 777 -R /main
+STOPSIGNAL SIGQUIT
+WORKDIR /main
+EXPOSE 8080 9000
+
+COPY ./config/supervisord.conf /etc/supervisord.conf
+
+CMD ["/usr/bin/supervisord", "-n"]
