@@ -97,7 +97,7 @@ RUN set -eux; \
 	apt-mark manual $savedAptMark > /dev/null; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
-COPY docker-php-source /usr/local/bin/
+COPY config/nginx/docker-php-source /usr/local/bin/
 
 RUN set -eux; \
 	\
@@ -205,7 +205,7 @@ RUN set -eux; \
 # smoke test
 	php --version
 
-COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
+COPY config/nginx/docker-php-ext-* config/nginx/docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium
@@ -254,19 +254,16 @@ RUN set -eux; \
 # Override stop signal to stop process gracefully
 # https://github.com/php/php-src/blob/17baa87faddc2550def3ae7314236826bc1b1398/sapi/fpm/php-fpm.8.in#L163
 WORKDIR /
-COPY sources.list /etc/apt/sources.list
+COPY config/nginx/sources.list /etc/apt/sources.list
 RUN apt-get update && apt-get install -y apt-utils && apt-get install -y nginx \
     && apt-get install -y supervisor\
-    && apt-get  install -y gnupg2 \
-    && apt-get  install -y git \
-    && apt-get  install -y zip
-
+    && apt-get  install -y gnupg2
 
 RUN pecl install xdebug php-amqp
-COPY ./config/nginx/fastcgi.conf /etc/nginx/fastcgi.conf
-COPY ./config/nginx/enabled.conf /etc/nginx/sites-enabled/enabled.conf
-COPY ./config/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY ./config/nginx/mime.types /etc/nginx/mime.types
+COPY config/nginx/fastcgi.conf /etc/nginx/fastcgi.conf
+COPY config/nginx/enabled.conf /etc/nginx/sites-enabled/enabled.conf
+COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY config/nginx/mime.types /etc/nginx/mime.types
 RUN apt update && apt upgrade -y && apt -y install lsb-release apt-transport-https ca-certificates \
     &&  apt install -y wget curl cron git unzip
 #RUN apt install python3-acme python3-certbot python3-mock python3-openssl python3-pkg-resources python3-pyparsing python3-zope.interface
@@ -288,6 +285,6 @@ STOPSIGNAL SIGQUIT
 WORKDIR /main
 EXPOSE 8080 9000
 
-COPY ./config/supervisord.conf /etc/supervisord.conf
+COPY config/supervisord.conf /etc/supervisord.conf
 
 CMD ["/usr/bin/supervisord", "-n"]
