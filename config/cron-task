@@ -1,0 +1,4 @@
+# crontab -e
+
+*/2 * * * * echo "Hello world 01" >> /var/log/cron/cron.log
+* * * * * echo $DATE > /var/log/cron/cron.log

@@ -1,6 +1,5 @@
 FROM mafio69/debian
 
-
 RUN apt-get update \
     && apt-get install -y apt-utils \
     && apt-get install -y supervisor \
@@ -22,7 +21,11 @@ RUN curl -fsSLO "$SUPERCRONIC_URL" \
  && echo "${SUPERCRONIC_SHA1SUM}  ${SUPERCRONIC}" | sha1sum -c - \
  && chmod +x "$SUPERCRONIC" \
  && mv "$SUPERCRONIC" "/usr/local/bin/${SUPERCRONIC}" \
- && ln -s "/usr/local/bin/${SUPERCRONIC}" /usr/local/bin/supercronic
+ && ln -s "/usr/local/bin/${SUPERCRONIC}" /usr/local/bin/supercronic \
+ && curl -sS https://getcomposer.org/installer | php \
+ && mkdir -p /usr/share/nginx/logs/ \
+ && touch -c /usr/share/nginx/logs/error.log \
+ && mkdir -p /usr/share/nginx/logs/
 
 # COPY config/nginx/fastcgi.conf /etc/nginx/fastcgi.conf
 # COPY config/nginx/enabled-symfony.conf /etc/nginx/sites-enabled/enabled.conf
@@ -31,7 +34,6 @@ COPY config/nginx/mime.types /etc/nginx/mime.types
 COPY config/php.ini /usr/local/etc/php/conf.d/php.ini
 COPY config/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 COPY ./main /main
-RUN curl -sS https://getcomposer.org/installer | php && mkdir -p /usr/share/nginx/logs/ && touch -c /usr/share/nginx/logs/error.log
 
 RUN wget https://get.symfony.com/cli/installer -O - | bash
 RUN apt-get update && apt-get upgrade -y  \
@@ -41,17 +43,17 @@ RUN apt-get update && apt-get upgrade -y  \
     && ln -sf /var/log/nginx/project_access.log \
     && ln -sf /var/log/nginx/project_error.log \
     && ln -sf /usr/share/nginx/logs/access.log \
-    && ln -sf /usr/share/nginx/logs/error.log
+    && ln -sf /usr/share/nginx/logs/error.log \
+    && addgroup docker \
+    && ln -sf /dev/stdout /var/log/nginx/access.log \
+    && ln -sf /dev/stderr /var/log/nginx/error.log
+
 COPY config/cron-task /etc/cron.d/crontask
-RUN mkdir //usr/share/nginx/logs/
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY config/nginx/enabled-symfony.conf /etc/nginx/conf.d/enabled-symfony.conf
-RUN
+
 ADD --chown=nobody:docker /main /main
-RUN addgroup docker \
-        && ln -sf /dev/stdout /var/log/nginx/access.log \
-	    && ln -sf /dev/stderr /var/log/nginx/error.log
 # STOPSIGNAL SIGQUIT
 WORKDIR /
 EXPOSE 8080 9000
