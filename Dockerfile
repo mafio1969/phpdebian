@@ -1,4 +1,4 @@
-FROM mafio69/debian
+FROM mafio69/debian:one
 
 RUN apt-get update \
     && apt-get install -y apt-utils \
@@ -45,6 +45,7 @@ RUN apt-get update && apt-get upgrade -y  \
     && ln -sf /usr/share/nginx/logs/access.log \
     && ln -sf /usr/share/nginx/logs/error.log \
     && addgroup docker \
+    && usermod -a -G docker root \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
