@@ -1,34 +1,30 @@
-FROM mafio69/debian:one
+FROM mafio69/debian:two
+
+ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.1.12/supercronic-linux-amd64 \
+    SUPERCRONIC=supercronic-linux-amd64 \
+    SUPERCRONIC_SHA1SUM=048b95b48b708983effb2e5c935a1ef8483d9e3e
 
 RUN apt-get update \
     && apt-get install -y apt-utils \
     && apt-get install -y supervisor \
     && apt-get install -y nginx \
     && apt-get install -y software-properties-common \
-    && apt-get install g++
-
-RUN pecl install xdebug && pecl install -o -f redis \
+    && apt-get install g++ \
+    && pecl install xdebug && pecl install -o -f redis \
     && docker-php-ext-install pdo_mysql \
     &&  rm -rf /tmp/pear \
     &&  docker-php-ext-enable redis \
-    &&  docker-php-ext-enable pdo_mysql
+    &&  docker-php-ext-enable pdo_mysql \
+    && curl -fsSLO "$SUPERCRONIC_URL" \
+    && echo "${SUPERCRONIC_SHA1SUM}  ${SUPERCRONIC}" | sha1sum -c - \
+    && chmod +x "$SUPERCRONIC" \
+    && mv "$SUPERCRONIC" "/usr/local/bin/${SUPERCRONIC}" \
+    && ln -s "/usr/local/bin/${SUPERCRONIC}" /usr/local/bin/supercronic \
+    && curl -sS https://getcomposer.org/installer | php \
+    && mkdir -p /usr/share/nginx/logs/ \
+    && touch -c /usr/share/nginx/logs/error.log \
+    && mkdir -p /usr/share/nginx/logs/
 
-ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.1.12/supercronic-linux-amd64 \
-    SUPERCRONIC=supercronic-linux-amd64 \
-    SUPERCRONIC_SHA1SUM=048b95b48b708983effb2e5c935a1ef8483d9e3e
-
-RUN curl -fsSLO "$SUPERCRONIC_URL" \
- && echo "${SUPERCRONIC_SHA1SUM}  ${SUPERCRONIC}" | sha1sum -c - \
- && chmod +x "$SUPERCRONIC" \
- && mv "$SUPERCRONIC" "/usr/local/bin/${SUPERCRONIC}" \
- && ln -s "/usr/local/bin/${SUPERCRONIC}" /usr/local/bin/supercronic \
- && curl -sS https://getcomposer.org/installer | php \
- && mkdir -p /usr/share/nginx/logs/ \
- && touch -c /usr/share/nginx/logs/error.log \
- && mkdir -p /usr/share/nginx/logs/
-
-# COPY config/nginx/fastcgi.conf /etc/nginx/fastcgi.conf
-# COPY config/nginx/enabled-symfony.conf /etc/nginx/sites-enabled/enabled.conf
 COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY config/nginx/mime.types /etc/nginx/mime.types
 COPY config/php.ini /usr/local/etc/php/conf.d/php.ini
