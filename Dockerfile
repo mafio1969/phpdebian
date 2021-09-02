@@ -1,4 +1,4 @@
-FROM mafio69/debian:0.08
+FROM mafio69/debian:start
 
 ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.1.12/supercronic-linux-amd64 \
     SUPERCRONIC=supercronic-linux-amd64 \
@@ -6,17 +6,7 @@ ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.
 
 RUN wget https://get.symfony.com/cli/installer -O - | bash
 
-RUN apt-get update \
-    && apt-get install -y apt-utils \
-    && apt-get install -y nginx \
-    && apt-get install -y software-properties-common \
-    && apt-get install g++ \
-    && pecl install xdebug && pecl install -o -f redis \
-    && docker-php-ext-install pdo_mysql \
-    &&  rm -rf /tmp/pear \
-    &&  docker-php-ext-enable redis \
-    &&  docker-php-ext-enable pdo_mysql \
-    && curl -fsSLO "$SUPERCRONIC_URL" \
+RUN curl -fsSLO "$SUPERCRONIC_URL" \
     && echo "${SUPERCRONIC_SHA1SUM}  ${SUPERCRONIC}" | sha1sum -c - \
     && chmod +x "$SUPERCRONIC" \
     && mv "$SUPERCRONIC" "/usr/local/bin/${SUPERCRONIC}" \

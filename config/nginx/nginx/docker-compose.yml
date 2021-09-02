@@ -1,0 +1,12 @@
+version: '2'
+services:
+  api-test:
+    container_name: api-test
+    build:
+      context: ../..
+
+networks:
+  default:
+    external:
+      name: mf-net
+
