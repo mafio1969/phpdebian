@@ -1,4 +1,4 @@
-FROM mafio69/debian:start
+FROM mafio69/phpfirst:latest
 
 ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.1.12/supercronic-linux-amd64 \
     SUPERCRONIC=supercronic-linux-amd64 \
@@ -26,12 +26,13 @@ RUN curl -fsSLO "$SUPERCRONIC_URL" \
 
 COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY config/nginx/mime.types /etc/nginx/mime.types
-COPY config/php.ini /usr/local/etc/php/conf.d/php.ini
-COPY config/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
-COPY ./main /main
+COPY config/custom.ini /usr/local/etc/php/conf.d/custom.ini
 COPY config/cron-task /etc/cron.d/crontask
 COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY config/nginx/enabled-symfony.conf /etc/nginx/conf.d/enabled-symfony.conf
+COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./main /main
+
 
 RUN usermod -a -G docker root && adduser \
        --system \
@@ -52,4 +53,4 @@ EXPOSE 8080 9000
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 STOPSIGNAL SIGQUIT
 #CMD ["php-fpm"]
-CMD ["/usr/bin/supervisord", "-nc", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD ["/usr/bin/supervisord", "-nc", "/etc/supervisord.conf"]

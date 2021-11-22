@@ -4,8 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7ccfdae5-92e8-418c-8649-8fce9924aad7" name="Changes" comment="">
+    <list default="true" id="49531239-67cb-4d0a-808c-19afc45d4301" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/custom.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/php-inspections-ea-ultimate.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/public/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/main/public/index.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,27 +21,27 @@
   <component name="ComposerSettings">
     <execution />
   </component>
-  <component name="Git.Merge.Settings">
-    <option name="BRANCH" value="forSymfony" />
-  </component>
-  <component name="Git.Rebase.Settings">
-    <option name="NEW_BASE" value="master" />
+  <component name="DockerExecCommands">
+    <ExecCommand>
+      <option name="command" value="php -i | grep pdo" />
+    </ExecCommand>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="master" />
-      </map>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
-  <component name="KubernetesApiPersistence">
-    <option name="context" value="minikube" />
-    <option name="namespace" value="default" />
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Dockerfile" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/config/custom.ini" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/config/supervisord.conf" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/config/php.ini" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/.gitignore" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/.env" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/main/public/index.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
   </component>
-  <component name="ProjectId" id="1xUqz49EMKv8mhNtIXDmQ6Eal5P" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectId" id="218cq3VxGYt3b8Rg49FfFt7Y6lg" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="compactDirectories" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -49,78 +55,36 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="com.google.cloudcode.ide_session_index" value="20210902_0006" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/Dockerfile" />
+    <property name="com.google.cloudcode.ide_session_index" value="20211122_0007" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="google.settings" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
-  <component name="RunManager">
-    <configuration name="build" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
-      <deployment type="dockerfile">
-        <settings>
-          <option name="imageTag" value="mafio69/phpdebian:latest" />
-          <option name="containerName" value="phpdebian" />
-          <option name="portBindings">
-            <list>
-              <DockerPortBindingImpl>
-                <option name="containerPort" value="8080" />
-                <option name="hostPort" value="9999" />
-              </DockerPortBindingImpl>
-            </list>
-          </option>
-          <option name="sourceFilePath" value="Dockerfile" />
-        </settings>
-      </deployment>
-      <method v="2" />
-    </configuration>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/config" />
+    </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="7ccfdae5-92e8-418c-8649-8fce9924aad7" name="Changes" comment="" />
-      <created>1630420274128</created>
+      <changelist id="49531239-67cb-4d0a-808c-19afc45d4301" name="Changes" comment="" />
+      <created>1637326342232</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1630420274128</updated>
-      <workItem from="1630420276286" duration="1124000" />
-      <workItem from="1630427358281" duration="551000" />
-      <workItem from="1630479092366" duration="359000" />
-      <workItem from="1630582375689" duration="2834000" />
-      <workItem from="1630591916256" duration="2921000" />
-      <workItem from="1630595537611" duration="134000" />
-      <workItem from="1630595676164" duration="626000" />
+      <updated>1637326342232</updated>
+      <workItem from="1637326343331" duration="1119000" />
+      <workItem from="1637395255686" duration="2291000" />
+      <workItem from="1637522508706" duration="5512000" />
+      <workItem from="1637564572656" duration="2125000" />
+      <workItem from="1637576077388" duration="1458000" />
     </task>
-    <task id="LOCAL-00001" summary="add">
-      <created>1630594266978</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1630594266978</updated>
-    </task>
-    <task id="LOCAL-00002" summary="add">
-      <created>1630594867753</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1630594867753</updated>
-    </task>
-    <task id="LOCAL-00003" summary="add">
-      <created>1630595752203</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1630595752203</updated>
-    </task>
-    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="add" />
-    <option name="LAST_COMMIT_MESSAGE" value="add" />
   </component>
 </project>
